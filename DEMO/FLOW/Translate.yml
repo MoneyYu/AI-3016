@@ -1,0 +1,101 @@
+id: template_chat_flow
+name: Template Chat Flow
+inputs:
+  chat_history:
+    type: list
+    is_chat_input: false
+    is_chat_history: true
+  question:
+    type: string
+    is_chat_input: true
+outputs:
+  answer:
+    type: string
+    reference: ${redo.output}
+    is_chat_output: true
+nodes:
+- name: translate
+  use_variants: true
+- name: comment
+  type: llm
+  source:
+    type: code
+    path: comment.jinja2
+  inputs:
+    deployment_name: gpt-4o
+    temperature: 1
+    top_p: 1
+    response_format:
+      type: text
+    original: ${inputs.question}
+    question: ${translate.output}
+  provider: AzureOpenAI
+  connection: ai-demo0109hub260822251883_aoai
+  api: chat
+  module: promptflow.tools.aoai
+  use_variants: false
+- name: redo
+  type: llm
+  source:
+    type: code
+    path: redo.jinja2
+  inputs:
+    deployment_name: gpt-4o
+    temperature: 1
+    top_p: 1
+    response_format:
+      type: text
+    ori_result: ${translate.output}
+    original: ${inputs.question}
+    question: ${comment.output}
+  provider: AzureOpenAI
+  connection: ai-demo0109hub260822251883_aoai
+  api: chat
+  module: promptflow.tools.aoai
+  use_variants: false
+node_variants:
+  translate:
+    default_variant_id: variant_0
+    variants:
+      variant_0:
+        node:
+          name: translate
+          type: llm
+          source:
+            type: code
+            path: chat.jinja2
+          inputs:
+            deployment_name: gpt-4o-mini
+            temperature: 0.7
+            top_p: 1
+            max_tokens: 256
+            response_format:
+              type: text
+            chat_history: ${inputs.chat_history}
+            question: ${inputs.question}
+          provider: AzureOpenAI
+          connection: ai-demo0109hub260822251883_aoai
+          api: chat
+          module: promptflow.tools.aoai
+      variant_1:
+        node:
+          name: translate
+          type: llm
+          source:
+            type: code
+            path: translate__variant_1.jinja2
+          inputs:
+            deployment_name: gpt-4o
+            temperature: 1
+            top_p: 0.8
+            max_tokens: 256
+            response_format:
+              type: text
+            chat_history: ${inputs.chat_history}
+            question: ${inputs.question}
+          provider: AzureOpenAI
+          connection: ai-demo0109hub260822251883_aoai
+          api: chat
+          module: promptflow.tools.aoai
+environment:
+  python_requirements_txt: requirements.txt
