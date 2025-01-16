@@ -1,0 +1,91 @@
+{
+  "package": {},
+  "code": {
+    "chat.jinja2": {
+      "name": "chat.jinja2",
+      "type": "prompt",
+      "inputs": {
+        "question": {
+          "type": [
+            "string"
+          ],
+          "allow_manual_entry": false,
+          "is_multi_select": false,
+          "input_type": "default",
+          "value": "${inputs.question}",
+          "id": "y1rs5kpp"
+        }
+      },
+      "source": "chat.jinja2",
+      "is_builtin": false,
+      "enable_kwargs": false,
+      "tool_state": "stable",
+      "toolId": "chat.jinja2"
+    },
+    "comment.jinja2": {
+      "name": "comment.jinja2",
+      "type": "prompt",
+      "inputs": {
+        "original": {
+          "type": [
+            "string"
+          ],
+          "allow_manual_entry": false,
+          "is_multi_select": false,
+          "input_type": "default"
+        },
+        "question": {
+          "type": [
+            "string"
+          ],
+          "allow_manual_entry": false,
+          "is_multi_select": false,
+          "input_type": "default"
+        }
+      },
+      "source": "comment.jinja2",
+      "is_builtin": false,
+      "enable_kwargs": false,
+      "tool_state": "stable",
+      "toolId": "comment.jinja2"
+    },
+    "redo.jinja2": {
+      "name": "redo.jinja2",
+      "type": "prompt",
+      "inputs": {
+        "original": {
+          "type": [
+            "string"
+          ],
+          "allow_manual_entry": false,
+          "is_multi_select": false,
+          "input_type": "default",
+          "value": "${inputs.question}"
+        },
+        "question": {
+          "type": [
+            "string"
+          ],
+          "allow_manual_entry": false,
+          "is_multi_select": false,
+          "input_type": "default",
+          "value": "${comment.output}"
+        },
+        "result": {
+          "type": [
+            "string"
+          ],
+          "allow_manual_entry": false,
+          "is_multi_select": false,
+          "input_type": "default",
+          "value": "${translate.output}"
+        }
+      },
+      "source": "redo.jinja2",
+      "is_builtin": false,
+      "enable_kwargs": false,
+      "tool_state": "stable",
+      "toolId": "redo.jinja2"
+    }
+  }
+}

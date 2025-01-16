@@ -1,0 +1,43 @@
+{
+  "orientation": "Vertical",
+  "nodeLayouts": {
+    "inputs": {
+      "x": 123,
+      "y": 62,
+      "index": -1
+    },
+    "outputs": {
+      "x": 123,
+      "y": 502,
+      "index": -1
+    },
+    "translate": {
+      "x": 12,
+      "y": 172,
+      "height": 75,
+      "index": 0
+    },
+    "comment": {
+      "x": 123,
+      "y": 282,
+      "height": 75,
+      "index": 1
+    },
+    "redo": {
+      "x": 123,
+      "y": 392,
+      "height": 75,
+      "index": 2
+    }
+  },
+  "viewport": {
+    "transformMatrix": [
+      1,
+      0,
+      0,
+      1,
+      38.733489990234375,
+      33.37030029296875
+    ]
+  }
+}
