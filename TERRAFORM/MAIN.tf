@@ -85,6 +85,16 @@ resource "azurerm_resource_group" "rg" {
   }
 }
 
+# Create a resource group if it doesn't exist
+resource "azurerm_resource_group" "demo-rg" {
+  name     = "Demo${var.group_postfix}"
+  location = local.location
+
+  tags = {
+    environment = local.group_name
+  }
+}
+
 # resource "azurerm_resource_group" "demo" {
 #   name     = "Demo${var.group_postfix}"
 #   location = local.location

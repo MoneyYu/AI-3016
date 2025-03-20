@@ -93,7 +93,7 @@ resource "azapi_resource" "hub" {
       */
 
     }
-    kind = "hub"
+    kind = "Hub"
   }
 
   tags = {
