@@ -73,7 +73,7 @@ resource "azapi_resource" "hub" {
   body = {
     properties = {
       description    = "${local.group_name} Azure AI hub"
-      friendlyName   = "${local.group_name} Hub"
+      friendlyName   = "${local.group_name_lower}-ai-hub-${local.random_str}"
       storageAccount = azurerm_storage_account.default.id
       keyVault       = azurerm_key_vault.default.id
 
@@ -114,7 +114,7 @@ resource "azapi_resource" "project" {
   body = {
     properties = {
       description   = "${local.group_name} Azure AI Project"
-      friendlyName  = "${local.group_name} Project"
+      friendlyName  = "${local.group_name_lower}-ai-project-${local.random_str}"
       hubResourceId = azapi_resource.hub.id
     }
     kind = "project"
