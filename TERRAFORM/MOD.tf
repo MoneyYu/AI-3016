@@ -26,74 +26,15 @@ resource "azurerm_key_vault" "default" {
   }
 }
 
-# 這個資源用於建立 Azure Cognitive Services，提供 AI 與機器學習等功能
-resource "azapi_resource" "AIServicesResource" {
-  type      = "Microsoft.CognitiveServices/accounts@2023-10-01-preview"
-  name      = "${local.group_name_lower}-ai-svc-res-${local.random_str}"
-  location  = azurerm_resource_group.rg.location
-  parent_id = azurerm_resource_group.rg.id
+# Deploy Azure AI Services resource
+resource "azurerm_ai_services" "AIServicesResource" {
+  name                = "${local.group_name_lower}-ai-svc-res-${local.random_str}"
+  location            = azurerm_resource_group.rg.location
+  resource_group_name = azurerm_resource_group.rg.name
+  sku_name            = "S0" # Pricing SKU tier
 
   identity {
     type = "SystemAssigned"
-  }
-
-  body = {
-    name = "${local.group_name_lower}-ai-svc-res-${local.random_str}"
-    properties = {
-      //restore = true
-      customSubDomainName = "${local.group_name_lower}-${local.random_str}-domain"
-      apiProperties = {
-        statisticsEnabled = false
-      }
-    }
-    kind = "AIServices"
-    sku = {
-      name = "S0"
-    }
-  }
-
-  response_export_values = ["*"]
-
-  tags = {
-    environment = local.group_name
-  }
-}
-
-// 這個資源用於建立 Azure Machine Learning 服務工作區，提供自動化機器學習等功能
-resource "azapi_resource" "hub" {
-  type      = "Microsoft.MachineLearningServices/workspaces@2024-04-01-preview"
-  name      = "${local.group_name_lower}-ai-hub-${local.random_str}"
-  location  = azurerm_resource_group.rg.location
-  parent_id = azurerm_resource_group.rg.id
-
-  identity {
-    type = "SystemAssigned"
-  }
-
-  body = {
-    properties = {
-      description    = "${local.group_name} Azure AI hub"
-      friendlyName   = "${local.group_name_lower}-ai-hub-${local.random_str}"
-      storageAccount = azurerm_storage_account.default.id
-      keyVault       = azurerm_key_vault.default.id
-
-      /* Optional: To enable these field, the corresponding dependent resources need to be uncommented.
-      applicationInsight = azurerm_application_insights.default.id
-      containerRegistry = azurerm_container_registry.default.id
-      */
-
-      /*Optional: To enable Customer Managed Keys, the corresponding 
-      encryption = {
-        status = var.encryption_status
-        keyVaultProperties = {
-            keyVaultArmId = azurerm_key_vault.default.id
-            keyIdentifier = var.cmk_keyvault_key_uri
-        }
-      }
-      */
-
-    }
-    kind = "Hub"
   }
 
   tags = {
@@ -101,23 +42,30 @@ resource "azapi_resource" "hub" {
   }
 }
 
-resource "azapi_resource" "project" {
-  type      = "Microsoft.MachineLearningServices/workspaces@2024-04-01-preview"
-  name      = "${local.group_name_lower}-ai-project-${local.random_str}"
-  location  = azurerm_resource_group.rg.location
-  parent_id = azurerm_resource_group.rg.id
+resource "azurerm_ai_foundry" "hub" {
+  name                = "${local.group_name_lower}-ai-hub-${local.random_str}"
+  location            = azurerm_resource_group.rg.location
+  resource_group_name = azurerm_resource_group.rg.name
+  storageAccount      = azurerm_storage_account.default.id
+  keyVault            = azurerm_key_vault.default.id
 
   identity {
-    type = "SystemAssigned"
+    type = "SystemAssigned" # Enable system-assigned managed identity
   }
 
-  body = {
-    properties = {
-      description   = "${local.group_name} Azure AI Project"
-      friendlyName  = "${local.group_name_lower}-ai-project-${local.random_str}"
-      hubResourceId = azapi_resource.hub.id
-    }
-    kind = "project"
+  tags = {
+    environment = local.group_name
+  }
+}
+
+# Create an AI Foundry Project within the AI Foundry service
+resource "azurerm_ai_foundry_project" "project" {
+  name               = "${local.group_name_lower}-ai-project-${local.random_str}"
+  location           = azurerm_ai_foundry.rg.location # Location from the AI Foundry service
+  ai_services_hub_id = azurerm_ai_foundry.hub.id      # Associated AI Foundry service
+
+  identity {
+    type = "SystemAssigned" # Enable system-assigned managed identity
   }
 
   tags = {
