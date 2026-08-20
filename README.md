@@ -12,8 +12,8 @@ GA: G-DXYJBX6BH8
 
 ## Course
 :::success
-Date: 20250109
-Course ID: 73411
+Date: 20260820
+Course ID: 109337
 :::
 
 :::info
@@ -21,30 +21,23 @@ Course Survey: [https://aka.ms/ai3016survey](https://aka.ms/ai3016survey)
 :::
 
 ## Course Materials
-:::info
-Microsoft Learn no longer publishes a separate `/training/courses/ai-3016` landing page. The three current learning-path pages below are the official course materials. The learning path contains six modules; the seventh instructor-led lesson is a separate Microsoft Learn module listed below.
-:::
-
 [AI-3016 learning path - English](https://learn.microsoft.com/en-us/training/paths/develop-generative-ai-apps/)
 
 [AI-3016 learning path - Chinese (Simplified)](https://learn.microsoft.com/zh-cn/training/paths/develop-generative-ai-apps/)
 
 [AI-3016 learning path - Chinese (Traditional)](https://learn.microsoft.com/zh-tw/training/paths/develop-generative-ai-apps/)
 
-### Independent instructor-led lesson
-[Develop AI agents with Microsoft Foundry and Visual Studio Code](https://learn.microsoft.com/en-us/training/modules/develop-ai-agents-azure-vs-code/)
-
 ## Infos
-[Enterprise Skills Initiative portal](https://esi.microsoft.com/)
+[ESI portal](https://esi.microsoft.com/)
 
-[Enterprise Skills Initiative support](https://esisupport.microsoft.com/en-US/)
+[ESI support](https://esisupport.microsoft.com/en-US/)
 
 ## Lab
 ### Skillable lab system
-[Enterprise Skills Initiative Labs](https://esi.learnondemand.net/User/Login?ReturnUrl=%2F)
+[ESI Labs](https://aka.ms/esilabs)
 
 :::success
-Training key: 27DCB1E121A2466A
+Training key: 07195D72A24EC76D
 :::
 
 :::info
@@ -53,37 +46,14 @@ Redeem the training key only once.
 The redemption is valid for 6 months.
 :::
 
-### Instructions - Modules 1 to 6
+### Instructions
 [AI-3016 labs - Microsoft Foundry](https://microsoftlearning.github.io/mslearn-ai-studio/)
-
-[M01 - Prepare for an AI development project](https://microsoftlearning.github.io/mslearn-ai-studio/Instructions/Exercises/01-Explore-ai-studio.html)
-
-[M02 - Explore and compare models](https://microsoftlearning.github.io/mslearn-ai-studio/Instructions/Exercises/02-model-catalog-evaluation.html)
-
-[M03 - Create a generative AI chat app](https://microsoftlearning.github.io/mslearn-ai-studio/Instructions/Exercises/03-foundry-sdk.html)
-
-[M04 - Create a generative AI app that uses tools](https://microsoftlearning.github.io/mslearn-ai-studio/Instructions/Exercises/04a-use-own-data.html)
-
-[M05 - Fine-tune a language model](https://microsoftlearning.github.io/mslearn-ai-studio/Instructions/Exercises/04b-finetune-model.html)
-
-[M06 - Apply guardrails to prevent harmful output](https://microsoftlearning.github.io/mslearn-ai-studio/Instructions/Exercises/06-Explore-content-filters.html)
 
 [AI-3016 lab files (main.zip)](https://codeload.github.com/MicrosoftLearning/mslearn-ai-studio/zip/refs/heads/main)
 
-### Instructions - Module 7 (standalone lesson)
 [AI agents labs](https://microsoftlearning.github.io/mslearn-ai-agents/)
 
-[M07 - Build an agent with the Foundry portal and Visual Studio Code](https://microsoftlearning.github.io/mslearn-ai-agents/Instructions/Exercises/01-build-agent-portal-and-vscode.html)
-
 [AI agents lab files (main.zip)](https://codeload.github.com/MicrosoftLearning/mslearn-ai-agents/zip/refs/heads/main)
-
-:::warning
-The current lab repositories are English-only. The former `mslearn-ai-studio.zh-cn` repository no longer exists.
-:::
-
-:::warning
-The M05 fine-tuning lab currently asks for **Supervised** fine-tuning on `gpt-5`, while the current Microsoft Foundry fine-tuning support table lists `gpt-5` for gated **RFT** only. Check the available models and your lab subscription before starting this exercise. Your instructor will provide the current supported path if the lab UI differs.
-:::
 
 ## Links
 ### M01 - Plan and prepare to develop AI solutions on Azure
