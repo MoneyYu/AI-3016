@@ -225,7 +225,40 @@ if ($Deploy) {
         throw "部署微調模型 '$fineTunedModel' 失敗。請確認 Developer tier 配額（OpenAI.DeveloperTier.gpt4.1-mini-finetune）。"
     }
 
-    Write-Host "部署完成：$deploymentName"
+    # `az ... deployment create` 在控制平面接受要求時就回傳成功；這不表示
+    # Developer-tier endpoint 已可推論。若現在就結束，第一個 API 呼叫會回
+    # BadRequestForDependentService。等到 provisioningState=Succeeded 才報完成。
+    $deploymentTimeout = [TimeSpan]::FromMinutes(20)
+    $deploymentStopwatch = [Diagnostics.Stopwatch]::StartNew()
+    while ($true) {
+        $provisioningState = az cognitiveservices account deployment show `
+            --resource-group $ResourceGroup `
+            --name $AccountName `
+            --deployment-name $deploymentName `
+            --query properties.provisioningState `
+            --output tsv 2>$null
+
+        if ($LASTEXITCODE -ne 0 -or [string]::IsNullOrWhiteSpace($provisioningState)) {
+            throw "無法讀取微調模型部署 '$deploymentName' 的 provisioningState。"
+        }
+
+        $provisioningState = $provisioningState.Trim()
+        Write-Host "  Developer tier 部署狀態：$provisioningState"
+
+        if ($provisioningState -eq 'Succeeded') {
+            break
+        }
+        if ($provisioningState -in @('Failed', 'Canceled')) {
+            throw "微調模型部署 '$deploymentName' 結束於 '$provisioningState'。"
+        }
+        if ($deploymentStopwatch.Elapsed -gt $deploymentTimeout) {
+            throw "等待微調模型部署 '$deploymentName' 就緒逾時（$($deploymentTimeout.TotalMinutes) 分鐘）；最後狀態 '$provisioningState'。"
+        }
+
+        Start-Sleep -Seconds 30
+    }
+
+    Write-Host "部署完成且可推論：$deploymentName"
 }
 else {
     Write-Host '（未指定 -Deploy，請在 Foundry portal 手動部署，或重新執行本腳本並加上 -Deploy）'

@@ -568,10 +568,10 @@ tools 與 grounded data 增加能力，也增加 prompt injection 與資料邊�
 |---|---|---|
 | Learn module | [Implement a responsible generative AI solution](https://learn.microsoft.com/en-us/training/modules/responsible-ai-studio/) | 課後完成 Impact Assessment 與責任設計延伸 |
 | Exercise | [06-Explore-content-filters](https://microsoftlearning.github.io/mslearn-ai-studio/Instructions/Exercises/06-Explore-content-filters.html) | default guardrail、custom guardrail |
-| Guarded fallback | [Demo environment](demo-environment.md) | 顯示獨立 `gpt-5.2-guarded` deployment 與 strict custom guardrail |
+| Guarded fallback | [Demo environment](demo-environment.md) | 顯示獨立 `<chat model>-guarded` deployment 與 strict custom guardrail（由 `terraform output -raw guarded_deployment` 取得名稱） |
 | Impact Assessment | [Microsoft Responsible AI Impact Assessment template](https://msblogs.thesourcemediaassets.com/sites/5/2022/06/Microsoft-RAI-Impact-Assessment-Template.pdf) | 說明文件化目的，不要當法律免責文件 |
 示範注意：
-- `gpt-5.2-guarded` 是**獨立 deployment**，嚴格 thresholds 不影響 M01/M03/M04 的主 demo。
+- `<chat model>-guarded` 是**獨立 deployment**（`parity` = `gpt-5.2-guarded`；`current` = `gpt-5.4-guarded`），嚴格 thresholds 不影響 M01/M03/M04 的主 demo。
 - 特定 prompt 是否被 block 可能具機率性；請展示「guardrail 已掛上」與設計理由，不要承諾固定一句話
   一定被阻擋。
 - 對 harmful content 不需要朗讀或展示過度刺激的內容；選擇安全、抽象、符合 lab 的測試情境。
@@ -581,7 +581,7 @@ tools 與 grounded data 增加能力，也增加 prompt injection 與資料邊�
 | 「開啟 guardrail 後就完全安全嗎？」 | 否。需 Map、Measure、Mitigate、Manage，並在 model、safety system、prompt / grounding、UX 分層處理。 |
 | 「Impact Assessment 是法律免責嗎？」 | 否。它記錄 purpose、expected use、potential harms 與 mitigations。 |
 | 有 RAG 就不會受到 injection | 不對。grounded documents 也可能有 indirect attacks；需使用 multi-layer controls。 |
-| custom guardrail 影響前面 chat demo | 不應影響；備援環境刻意將 strict policy 放在 `gpt-5.2-guarded`。 |
+| custom guardrail 影響前面 chat demo | 不應影響；備援環境刻意將 strict policy 放在 `<chat model>-guarded`（名稱由 `terraform output -raw guarded_deployment` 取得）。 |
 | 某次 response 沒被 block | 說明 block 行為不宜以單一提示承諾；檢查 policy、threshold、測試集與量測。 |
 **Knowledge check 正解**
 1. 建立 AI Impact Assessment 的原因：**document the purpose, expected use, and potential harms**。
@@ -854,8 +854,8 @@ terraform apply -var group_postfix=0821
 ```
 - [ ] 確認 stack 使用 Entra ID only：Storage shared keys disabled、Foundry `local_auth_enabled = false`。
 - [ ] 確認 RBAC propagation 已完成；若初期 401 / 403，等待既有腳本的重試後再判斷。
-- [ ] 確認下列 deployment 存在：`gpt-5.2`、`gpt-5-mini`、`gpt-4.1-mini`、`gpt-5.2-guarded`。
-- [ ] 確認 strict guardrail 只套用到 `gpt-5.2-guarded`，不影響其他 demo。
+- [ ] 以 `terraform output -raw model_deployment`、`compare_deployment`、`finetune_base_deployment`、`guarded_deployment` 確認各 deployment 存在；不要把 `current` profile 誤當成 parity 名稱。
+- [ ] 確認 strict guardrail 只套用到 `terraform output -raw guarded_deployment` 指向的 deployment，不影響其他 demo。
 - [ ] 確認 vector store 已載入 6 份 Margie's Travel brochures。
 - [ ] 確認 demo agent 已具 `file_search` 與 `code_interpreter`。
 
@@ -883,7 +883,7 @@ cd scripts
 | M03 | `MODEL_DEPLOYMENT` demo code、Responses API、多回合 `previous_response_id` |
 | M04 | `file_search` 可回應 brochure 問題、citations、`code_interpreter` 可算 `sqrt(16)`、function output 回傳流程 |
 | M05 | `gpt-4.1-mini` SFT job / deployment、training data、prompt vs RAG vs fine-tuning 比較 |
-| M06 | default guardrail、custom guardrail、`gpt-5.2-guarded` policy 顯示；不以單一 block 結果作唯一證據 |
+| M06 | default guardrail、custom guardrail、`terraform output -raw guarded_deployment` 的 policy 顯示；不以單一 block 結果作唯一證據 |
 | M07 | portal agent、`file_search`、`code_interpreter`；當日也須重開 conversation / session |
 
 ### 8.6 Workstation 與投影片

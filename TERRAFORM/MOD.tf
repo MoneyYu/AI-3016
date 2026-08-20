@@ -40,7 +40,9 @@ resource "azurerm_storage_container" "agent_files" {
   container_access_type = "private"
 }
 
-# Fine-tuning training data (travel-finetune-hotel.jsonl) used by module 5.
+# Convenience copy of the official module 5 training data (travel-finetune-hotel.jsonl).
+# Start-FineTune.ps1 deliberately re-downloads its source directly from the official lab URL
+# so the job always uses the latest published exercise data; this blob copy is for trainer inspection.
 resource "azurerm_storage_container" "finetune" {
   name                  = "finetune"
   storage_account_id    = azurerm_storage_account.default.id
@@ -332,6 +334,35 @@ locals {
 
   # Foundry project endpoint used by the Agent Service / azure-ai-projects SDK.
   project_endpoint = "https://${azurerm_cognitive_account.foundry.custom_subdomain_name}.services.ai.azure.com/api/projects/${azurerm_cognitive_account_project.project.name}"
+}
+
+# Fine-tuned model deployments are created by Start-FineTune.ps1 after apply,
+# because the model ID does not exist until the job succeeds. They are invisible
+# to Terraform state, and Azure refuses to delete a Foundry account while any
+# deployment remains. The destroy provisioner discovers every `.ft-` model in
+# this dedicated account, so custom Start-FineTune.ps1 suffixes cannot block
+# destroy. This dependency creates the required reverse destroy ordering.
+resource "terraform_data" "finetune_deployment_cleanup" {
+  input = {
+    resource_group = azurerm_resource_group.rg.name
+    account_name   = azurerm_cognitive_account.foundry.name
+    script_path    = "${path.module}/scripts/Remove-FineTuneDeployment.ps1"
+  }
+
+  depends_on = [azurerm_cognitive_account.foundry]
+
+  provisioner "local-exec" {
+    when = destroy
+    # Destroy-time provisioners may only reference self; script_path is stored
+    # in input during apply and accessed through self.input below.
+    interpreter = ["pwsh", "-NoProfile", "-File"]
+    command     = self.input.script_path
+
+    environment = {
+      RESOURCE_GROUP = self.input.resource_group
+      ACCOUNT_NAME   = self.input.account_name
+    }
+  }
 }
 
 resource "terraform_data" "sample_data" {

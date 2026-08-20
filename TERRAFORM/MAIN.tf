@@ -111,12 +111,6 @@ variable "guarded_capacity" {
   default     = 20
 }
 
-variable "finetune_location" {
-  description = "Region used for fine-tuning. Defaults to the main location. gpt-4.1-mini supervised fine-tuning is only offered in the North Central US and Sweden Central standard regions."
-  type        = string
-  default     = null
-}
-
 variable "deployer_object_id" {
   description = "Entra object ID that the data-plane scripts authenticate as (the `az login` identity). Defaults to the identity Terraform runs as. Override when Terraform runs under a different principal (e.g. a service principal) than `az`."
   type        = string
@@ -153,8 +147,7 @@ locals {
   #   * a standard fine-tuning region for the gpt-4.1 family, and
   #   * a Global Standard region for every model this course uses.
   # See docs/demo-environment.md for the full comparison table.
-  location          = "swedencentral"
-  finetune_location = coalesce(var.finetune_location, local.location)
+  location = "swedencentral"
 
   # Suffix used in resource names. Fixed by default for predictable, stable
   # names. To use a fresh dynamic suffix instead (e.g. to avoid the ~48h

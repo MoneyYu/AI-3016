@@ -122,8 +122,9 @@
 支援 Developer 部署型別 ＋ 與 lab 附的 `travel-finetune-hotel.jsonl`（Chat Completions
 conversational JSONL）格式完全相容。
 
-**已實測驗證（2026-08-20）**：在 `swedencentral` 對 `gpt-4.1-mini` 送出 Supervised 微調工作
-**成功被接受**（job id `ftjob-…`），而 lab 指定的 `gpt-5` SFT 路徑則是 gated。
+**已實測驗證（2026-08-20）**：在 `swedencentral` 對 `gpt-4.1-mini` 的 Supervised 微調工作
+`ftjob-1c603d5ea68149bc95927401fb046dbf` **成功完成**（約 55 分鐘），並成功部署到 Developer tier
+`gpt-4.1-mini-ft-travel`；後續透過 Responses API 推論，得到預期的 Paris travel-assistant 回應。
 
 > ⚠️ **2027-04-14 之後**：若 Microsoft 仍未把 SFT 開放給 gpt-5.x，微調示範必須改用
 > `Llama-3.3-70B-Instruct`（Global training、微調仍為 public preview）或改為純講解。
@@ -145,7 +146,7 @@ conversational JSONL）格式完全相容。
 
 **結論**：`swedencentral` 與 `northcentralus` 都滿足硬性需求；選 **`swedencentral`** 是因為
 **Agent 工具覆蓋最完整**，單一區域即可涵蓋全部 7 課，不必拆成「一般 demo 在 A 區、微調在 B 區」的雙區堆疊。
-`TERRAFORM/MAIN.tf` 保留 `finetune_location` override 變數備用。
+需要改變微調區域時，必須建立使用該區域的**另一個** Foundry account/project；單一帳戶的 endpoint 無法由變數搬遷。
 
 > ⚠️ 注意：Global Standard 部署的**推論流量不保證留在瑞典／歐盟**。
 > 有資料落地需求時需改用 Data Zone 或 Standard 部署型別。
@@ -179,9 +180,9 @@ cd TERRAFORM/scripts
 ### 2026-08-20 測試訂閱的實際結果
 
 ```
-[ OK ] gpt-5.2        ver=2025-12-11   配額剩餘 1720
-[ OK ] gpt-5-mini     ver=2025-08-07   配額剩餘 1850
-[ OK ] gpt-4.1-mini   ver=2025-04-14   配額剩餘 7000
+[ OK ] gpt-5.2        ver=2025-12-11   配額剩餘 1720（需要 70：主 chat 50 + guarded 20）
+[ OK ] gpt-5-mini     ver=2025-08-07   配額剩餘 1850（需要 30）
+[ OK ] gpt-4.1-mini   ver=2025-04-14   配額剩餘 7000（需要 30）
 [ OK ] finetune       OpenAI.DeveloperTier.gpt4.1-mini-finetune 配額剩餘 500
 ```
 
@@ -237,7 +238,7 @@ course-prep 的「優先用最新 GA」規則在此作為**平手時的決勝條
 
 ### 隔離原則
 
-M06 的嚴格 guardrail **不掛在共用的主部署上**，而是另建一個 `gpt-5.2-guarded` 部署承載。
+M06 的嚴格 guardrail **不掛在共用的主部署上**，而是另建 `<chat model>-guarded` 部署承載（`parity` = `gpt-5.2-guarded`；`current` = `gpt-5.4-guarded`）。
 否則模組 1/3/4 的 demo 會被嚴格門檻干擾。
 
 ---
@@ -258,6 +259,6 @@ M06 的嚴格 guardrail **不掛在共用的主部署上**，而是另建一個 
 - [ ] 確認 gpt-5.x 是否已開放 SFT（若有，微調示範可回歸 lab 原文）
 - [ ] `Test-ModelAvailability.ps1` 在**講師訂閱**與**新 Skillable 訂閱**各跑一次
 - [ ] `terraform apply` 並確認 21 個資源、vector store 6 份文件、demo agent 已建立
-- [ ] `Start-FineTune.ps1` 課前完成
+- [ ] `Start-FineTune.ps1` 課前完成，並等候 Developer-tier `provisioningState=Succeeded`（`az ... deployment create` 回傳成功不代表立刻可推論）
 - [ ] 逐一 smoke test：chat、file_search、code_interpreter、guarded 部署、agent
 - [ ] 課後 `terraform destroy`

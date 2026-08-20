@@ -4,30 +4,31 @@
     AI-3016 backup 環境的模型可用性預檢閘門（terraform apply 之前務必先跑）。
 
 .DESCRIPTION
-    為什麼需要這支腳本：
+    Microsoft 的兩份官方文件在此議題上互相矛盾：退役排程把 gpt-5 /
+    gpt-5-mini 標為 GA，但生命週期政策寫明模型上市滿 12 個月後，
+    新客戶無法建立部署；而且「既有客戶」是以訂閱為單位判定。
+    gpt-5 / gpt-5-mini 在 2026-08-07 已跨過該門檻。
 
-    Microsoft 的兩份官方文件在此議題上互相矛盾——
-      * 退役排程把 gpt-5 / gpt-5-mini 標為 GA；
-      * 生命週期政策卻寫明「模型上市滿 12 個月後，新客戶無法建立部署」，
-        而且「既有客戶」是以「訂閱」為單位判定，同租用戶的新訂閱不繼承。
-      gpt-5 / gpt-5-mini 於 2025-08-07 上市，已在 2026-08-07 跨過該門檻。
+    因此 deployability 不能用日期推算，必須對「實際要用的那個訂閱」實測。
+    Skillable 學員訂閱與講師 demo 訂閱是不同訂閱，兩邊都要跑。
 
-    因此「能不能部署」不能用日期推算，必須對「實際要用的那個訂閱」實測。
-    Skillable 學員訂閱與講師 demo 訂閱是不同訂閱，結果可能不同——兩邊都要跑。
+    容量參數預設值刻意與 MAIN.tf 完全一致，且會把同模型的主 chat (50)
+    與 guarded (20) 部署加總。若 terraform apply 有覆寫容量，呼叫本腳本時
+    必須傳入相同數值，否則預檢結果無效。
 
 .PARAMETER Location
-    要檢查的區域，預設 swedencentral（本課的區域決策，見 docs/demo-environment.md）。
+    要檢查的區域，預設 swedencentral（本課的區域決策）。
 
 .PARAMETER ModelProfile
-    parity  = lab 指定的模型（gpt-5.2 + gpt-5-mini）
+    parity = lab 指定的模型（gpt-5.2 + gpt-5-mini）
     current = 較新的 GA 替代（gpt-5.4 + gpt-5.4-mini）
-
-.PARAMETER RequiredCapacity
-    每個模型需要的容量（單位：千 TPM），用來檢查剩餘配額是否足夠。
 
 .EXAMPLE
     ./Test-ModelAvailability.ps1
-    ./Test-ModelAvailability.ps1 -ModelProfile current -Location northcentralus
+
+.EXAMPLE
+    # Must match the capacity overrides sent to terraform apply.
+    ./Test-ModelAvailability.ps1 -ModelProfile current -ChatCapacity 80 -GuardedCapacity 30
 #>
 
 [CmdletBinding()]
@@ -37,22 +38,55 @@ param(
     [ValidateSet('parity', 'current')]
     [string] $ModelProfile = 'parity',
 
-    [int] $RequiredCapacity = 30
+    # Must stay in sync with TERRAFORM/MAIN.tf defaults.
+    [ValidateRange(1, 1000000)][int] $ChatCapacity = 50,
+    [ValidateRange(1, 1000000)][int] $CompareCapacity = 30,
+    [ValidateRange(1, 1000000)][int] $FineTuneBaseCapacity = 30,
+    [ValidateRange(1, 1000000)][int] $GuardedCapacity = 20
 )
 
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 
 $profiles = @{
-    parity  = @('gpt-5.2', 'gpt-5-mini')
-    current = @('gpt-5.4', 'gpt-5.4-mini')
+    parity = @{
+        chat    = 'gpt-5.2'
+        compare = 'gpt-5-mini'
+    }
+    current = @{
+        chat    = 'gpt-5.4'
+        compare = 'gpt-5.4-mini'
+    }
 }
 
-# 微調基底：唯一同時滿足 SFT + 未 Deprecated + swedencentral 標準區域 +
-# 支援 Developer 部署型別的模型。詳見 docs/demo-environment.md。
+# The only SFT-capable, non-deprecated model offered in the Sweden Central
+# standard fine-tuning region with Developer deployment support. Re-check the
+# retirement schedule before every delivery; it is Legacy and retires 2027-04-14.
 $finetuneBase = 'gpt-4.1-mini'
+$profile = $profiles[$ModelProfile]
 
-$requiredModels = @($profiles[$ModelProfile]) + @($finetuneBase)
+# Aggregate every Terraform deployment that consumes the same model quota.
+# The main and guarded deployments share the chat model, so they need 70 TPM by
+# default (50 + 20), not the old uniform 30 TPM check.
+$requirements = [ordered]@{}
+function Add-ModelRequirement {
+    param(
+        [Parameter(Mandatory)][string] $Model,
+        [Parameter(Mandatory)][int] $Capacity
+    )
+
+    if ($requirements.Contains($Model)) {
+        $requirements[$Model] += $Capacity
+    }
+    else {
+        $requirements[$Model] = $Capacity
+    }
+}
+
+Add-ModelRequirement -Model $profile.chat -Capacity $ChatCapacity
+Add-ModelRequirement -Model $profile.chat -Capacity $GuardedCapacity
+Add-ModelRequirement -Model $profile.compare -Capacity $CompareCapacity
+Add-ModelRequirement -Model $finetuneBase -Capacity $FineTuneBaseCapacity
 
 $account = az account show -o json 2>$null | ConvertFrom-Json
 if ($LASTEXITCODE -ne 0 -or -not $account) {
@@ -62,7 +96,8 @@ if ($LASTEXITCODE -ne 0 -or -not $account) {
 Write-Host '=== AI-3016 模型可用性預檢 ==='
 Write-Host ("訂閱     : {0} ({1})" -f $account.name, $account.id)
 Write-Host ("區域     : {0}" -f $Location)
-Write-Host ("Profile  : {0} -> {1}" -f $ModelProfile, ($requiredModels -join ', '))
+Write-Host ("Profile  : {0}" -f $ModelProfile)
+Write-Host ("需求     : {0}" -f (($requirements.GetEnumerator() | ForEach-Object { "$($_.Key)=$($_.Value) TPM" }) -join ', '))
 Write-Host ("查核時間 : {0}" -f (Get-Date -Format 'yyyy-MM-dd HH:mm:ss'))
 Write-Host ''
 
@@ -88,7 +123,8 @@ function Get-QuotaKeyName {
 
 $failures = @()
 
-foreach ($model in $requiredModels) {
+foreach ($model in $requirements.Keys) {
+    $requiredCapacity = [int]$requirements[$model]
     $entries = @($catalog | Where-Object { $_.model.name -eq $model -and $_.kind -eq 'AIServices' })
 
     if ($entries.Count -eq 0) {
@@ -115,14 +151,14 @@ foreach ($model in $requiredModels) {
         continue
     }
 
-    $free = [int] $quota.limit - [int] $quota.currentValue
-    if ($free -lt $RequiredCapacity) {
-        $failures += "$model : 配額不足（剩餘 $free，需要 $RequiredCapacity）。"
-        Write-Host ("[FAIL] {0,-14} ver={1,-12} 配額剩餘 {2}（需要 {3}）" -f $model, $entry.model.version, $free, $RequiredCapacity)
+    $free = [int]$quota.limit - [int]$quota.currentValue
+    if ($free -lt $requiredCapacity) {
+        $failures += "$model : 配額不足（剩餘 $free，需要 $requiredCapacity；已加總所有同模型部署）。"
+        Write-Host ("[FAIL] {0,-14} ver={1,-12} 配額剩餘 {2}（需要 {3}）" -f $model, $entry.model.version, $free, $requiredCapacity)
         continue
     }
 
-    Write-Host ("[ OK ] {0,-14} ver={1,-12} 配額剩餘 {2}" -f $model, $entry.model.version, $free)
+    Write-Host ("[ OK ] {0,-14} ver={1,-12} 配額剩餘 {2}（需要 {3}）" -f $model, $entry.model.version, $free, $requiredCapacity)
 }
 
 # 微調後的模型會部署到 Developer tier，需要另一組配額。
@@ -134,7 +170,7 @@ if (-not $ftQuota) {
     Write-Host ("[FAIL] {0,-14} 無配額項目 {1}" -f 'finetune', $ftQuotaKey)
 }
 else {
-    $ftFree = [int] $ftQuota.limit - [int] $ftQuota.currentValue
+    $ftFree = [int]$ftQuota.limit - [int]$ftQuota.currentValue
     if ($ftFree -le 0) {
         $failures += "微調部署 : Developer tier 配額已用盡（$ftQuotaKey）。"
         Write-Host ("[FAIL] {0,-14} Developer tier 配額已用盡" -f 'finetune')

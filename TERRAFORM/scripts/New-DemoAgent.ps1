@@ -148,6 +148,33 @@ $policyStore = Invoke-ProjectApi -Method POST -Path '/vector_stores' -Body @{
 }
 Write-Host "  IT policy vector store：$($policyStore.id)"
 
+# Vector-store indexing is asynchronous. Do not attach the store to an agent
+# until its sole policy file is available; otherwise a smoke test immediately
+# after apply can return an incomplete/empty file_search answer.
+$vectorStoreTimeout = [TimeSpan]::FromMinutes(15)
+$vectorStoreStopwatch = [Diagnostics.Stopwatch]::StartNew()
+while ($true) {
+    $vectorStoreState = Invoke-ProjectApi -Method GET -Path "/vector_stores/$($policyStore.id)"
+    $counts = $vectorStoreState.file_counts
+    Write-Host ("  IT policy vector store 狀態 {0}｜completed={1} in_progress={2} failed={3}" -f `
+        $vectorStoreState.status, $counts.completed, $counts.in_progress, $counts.failed)
+
+    if ($counts.failed -gt 0) {
+        throw "IT policy vector store $($policyStore.id) 有 $($counts.failed) 個檔案索引失敗。"
+    }
+    if ($vectorStoreState.status -eq 'completed' -and $counts.completed -eq 1) {
+        break
+    }
+    if ($vectorStoreState.status -eq 'expired') {
+        throw "IT policy vector store $($policyStore.id) 已過期，無法建立 demo agent。"
+    }
+    if ($vectorStoreStopwatch.Elapsed -gt $vectorStoreTimeout) {
+        throw "等待 IT policy vector store $($policyStore.id) 索引完成逾時（$($vectorStoreTimeout.TotalMinutes) 分鐘）。"
+    }
+
+    Start-Sleep -Seconds 10
+}
+
 # --- 建立 agent --------------------------------------------------------------
 $instructions = @(
     'You are an IT support agent for Contoso.',
