@@ -32,3 +32,13 @@ override.tf.json
 .terraformrc
 terraform.rc
 .terraform.lock.hcl
+# Python virtual environment (used one-time for PPT/PDF extraction and link checks)
+.venv/
+__pycache__/
+
+# Terraform data-plane staging (downloaded course sample data - never committed)
+TERRAFORM/.sample-data/
+
+# Saved Terraform plans
+tfplan
+*.tfplan

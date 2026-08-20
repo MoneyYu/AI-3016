@@ -61,3 +61,25 @@
 #*.PDF   diff=astextplain
 #*.rtf   diff=astextplain
 #*.RTF   diff=astextplain
+###############################################################################
+# Binary assets
+#
+# The global "* text=auto" above will CORRUPT these formats through line-ending
+# normalisation. Mark them explicitly as binary.
+###############################################################################
+*.pdf   binary
+*.PDF   binary
+*.pptx  binary
+*.PPTX  binary
+*.ppt   binary
+*.docx  binary
+*.xlsx  binary
+*.zip   binary
+*.png   binary
+*.jpg   binary
+*.jpeg  binary
+*.gif   binary
+*.ico   binary
+*.mp4   binary
+*.woff  binary
+*.woff2 binary
