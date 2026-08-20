@@ -49,6 +49,9 @@ function Invoke-ProjectApi {
         [Parameter(Mandatory)][string] $Path,
         [object] $Body,
         [hashtable] $Form,
+        # 讀取「剛建立的資源」時，服務可能還沒讓它可見而回 404。
+        # 這種情況要重試，而不是判定為介面變更。
+        [switch] $RetryOnNotFound,
         [int] $MaxAttempts = 8
     )
 
@@ -61,18 +64,35 @@ function Invoke-ProjectApi {
 
         try {
             if ($Form) {
-                return Invoke-RestMethod -Method $Method -Uri $uri -Headers $headers -Form $Form -TimeoutSec 300
+                $result = Invoke-RestMethod -Method $Method -Uri $uri -Headers $headers -Form $Form -TimeoutSec 300
             }
-            if ($null -ne $Body) {
+            elseif ($null -ne $Body) {
                 $json = $Body | ConvertTo-Json -Depth 12 -Compress
-                return Invoke-RestMethod -Method $Method -Uri $uri -Headers $headers -ContentType 'application/json' -Body $json -TimeoutSec 300
+                $result = Invoke-RestMethod -Method $Method -Uri $uri -Headers $headers -ContentType 'application/json' -Body $json -TimeoutSec 300
             }
-            return Invoke-RestMethod -Method $Method -Uri $uri -Headers $headers -TimeoutSec 300
+            else {
+                $result = Invoke-RestMethod -Method $Method -Uri $uri -Headers $headers -TimeoutSec 300
+            }
+
+            # 一旦有任何一次呼叫成功，就代表 project 的資料平面端點已就緒；
+            # 之後再收到 404 就是真的介面變更，而不是建立後的傳播延遲。
+            $script:ProjectEndpointReady = $true
+            return $result
         }
         catch {
             $status = $null
             if ($_.Exception.PSObject.Properties.Name -contains 'Response' -and $_.Exception.Response) {
                 $status = [int] $_.Exception.Response.StatusCode
+            }
+
+            # 剛建立好的 Foundry project，其資料平面端點需要一點時間才會開始服務，
+            # 這段期間會回 404。實測（2026-08-20）apply 後立刻呼叫回 404，
+            # 約一分鐘後同一個 GET 就成功。因此就緒前的 404 視為暫時性並重試。
+            if ($status -eq 404 -and ($RetryOnNotFound -or -not $script:ProjectEndpointReady) -and $attempt -lt $MaxAttempts) {
+                $delay = [Math]::Min(60, 8 * $attempt)
+                Write-Warning "$Method $uri 回傳 HTTP 404（第 $attempt 次），$delay 秒後重試（端點或剛建立的資源可能尚未就緒）..."
+                Start-Sleep -Seconds $delay
+                continue
             }
 
             if ($status -eq 404) {
@@ -100,8 +120,9 @@ function Invoke-ProjectApi {
 }
 
 # --- 讀取 Terraform 傳入的環境變數 -------------------------------------------
-$script:ProjectEndpoint = (Get-RequiredEnv 'PROJECT_ENDPOINT').TrimEnd('/')
-$script:ApiVersion      = 'v1'
+$script:ProjectEndpoint      = (Get-RequiredEnv 'PROJECT_ENDPOINT').TrimEnd('/')
+$script:ApiVersion           = 'v1'
+$script:ProjectEndpointReady = $false
 $agentName              = Get-RequiredEnv 'AGENT_NAME'
 $modelDeployment        = Get-RequiredEnv 'MODEL_DEPLOYMENT'
 $agentFilesPath         = Get-RequiredEnv 'AGENT_FILES_PATH'
@@ -154,7 +175,7 @@ Write-Host "  IT policy vector store：$($policyStore.id)"
 $vectorStoreTimeout = [TimeSpan]::FromMinutes(15)
 $vectorStoreStopwatch = [Diagnostics.Stopwatch]::StartNew()
 while ($true) {
-    $vectorStoreState = Invoke-ProjectApi -Method GET -Path "/vector_stores/$($policyStore.id)"
+    $vectorStoreState = Invoke-ProjectApi -Method GET -Path "/vector_stores/$($policyStore.id)" -RetryOnNotFound
     $counts = $vectorStoreState.file_counts
     Write-Host ("  IT policy vector store 狀態 {0}｜completed={1} in_progress={2} failed={3}" -f `
         $vectorStoreState.status, $counts.completed, $counts.in_progress, $counts.failed)

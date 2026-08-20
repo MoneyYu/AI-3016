@@ -111,6 +111,10 @@ terraform apply -replace='terraform_data.demo_agent[0]'  -var group_postfix=0821
 
 ## 步驟 2：微調（**必須課前執行**）
 
+> ⚠️ `Start-FineTune.ps1` 會建立 account 層級的模型部署，屬於同一個控制平面佇列。
+> **不可與 `terraform apply` 或 `terraform destroy` 同時執行**，否則會出現 409 `RequestConflict`。
+> Terraform 的相依關係無法協調外部程序。
+
 ```powershell
 cd TERRAFORM
 $ep = terraform output -raw azure_openai_v1_endpoint
@@ -205,6 +209,8 @@ terraform destroy -var group_postfix=0821
 | Storage `You do not have the required permissions` | RBAC 角色指派尚未傳播 | 腳本已內建重試（8 次、遞增延遲）。若持續失敗，確認執行 `az` 的身分與 `deployer_object_id` 一致 |
 | Cognitive 帳戶 data plane 回 401 | 缺 `custom_subdomain_name`（區域端點不支援 Entra ID）| 本 stack 已設定；若自行新增帳戶請一併設定 |
 | 模型部署 `InsufficientQuota` | 訂閱配額不足 | 先跑 `Test-ModelAvailability.ps1`；降低 `*_capacity` 變數或改用 `model_profile=current` |
+| 建立 project 時 `409 RequestConflict: Another operation is in progress` | 同一個 Cognitive 帳戶同時有多個控制平面寫入。`azurerm` 4.81.0 未對 `azurerm_cognitive_account_project` 上 account mutex（上游修正 [PR #33151](https://github.com/hashicorp/terraform-provider-azurerm/pull/33151)）| 本 stack 已用 `depends_on` 串成單一序列鏈；**不要**移除。確認沒有其他 apply／portal 操作同時進行後重跑 |
+| `destroy` 時部署刪除回 `409` / `412` | 帳戶子資源刪除彼此並行 | `Remove-FineTuneDeployment.ps1` 已針對這類暫時性訊息重試；cleanup 也排在鏈尾、destroy 時最先執行 |
 | Cognitive 帳戶名稱「已存在」 | 48 小時軟刪除名稱保留 | 換 `group_postfix` 或改用 `random_string.rid` |
 | `New-DemoAgent.ps1` 回 404 | Agent Service REST 介面變更 | 依錯誤訊息在 portal 手動建立，或設 `-var enable_demo_agent=false` |
 

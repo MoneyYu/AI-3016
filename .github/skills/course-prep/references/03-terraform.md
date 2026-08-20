@@ -42,8 +42,16 @@ don't change it casually. If one specific service is capacity-constrained in tha
 2. `azurerm_cognitive_account_project`.
 3. one `azurerm_cognitive_deployment` **per model**.
 
-**Chain model deployments with `depends_on`** (one after another) on purpose — the Cognitive
-Services control plane rejects parallel deployment writes.
+**Serialize every child write of the same Cognitive Services account with `depends_on`** — Azure
+permits only one control-plane operation at a time per account. Chain the **project**, the **RAI
+policy** and **all model deployments** into a single line, and put any `terraform_data` cleanup
+marker at the **end** so `destroy` (which reverses the chain) runs it first.
+
+Do not rely on the provider's internal mutexes: they are **process-local**, and coverage is
+uneven. `azurerm` 4.81.0 locks deployments and RAI policies by account but omits the lock on
+`azurerm_cognitive_account_project`, which surfaces as `409 RequestConflict: Another operation is
+in progress` (upstream fix: hashicorp/terraform-provider-azurerm#33151). `Microsoft.Authorization`
+role assignments are a different resource provider and can stay parallel.
 
 ## Entra ID (AAD) only — no keys
 

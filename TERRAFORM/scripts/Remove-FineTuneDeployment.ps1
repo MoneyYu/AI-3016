@@ -52,7 +52,13 @@ function Invoke-AzCli {
             return $null
         }
 
-        $retryable = $text -match '(?i)\b408\b|\b429\b|\b50[0-4]\b|TooManyRequests|ServiceUnavailable|InternalServerError|GatewayTimeout'
+        # Azure serialises control-plane operations per Cognitive Services account.
+        # Deleting a deployment while another account child resource is being
+        # deleted returns 409 RequestConflict or 412. Match those SPECIFIC
+        # transient messages rather than blanket-retrying every 409, because a
+        # bare 409 can also be a genuine, non-transient conflict.
+        $transientConflict = $text -match '(?i)RequestConflict|Another operation is in progress|AnotherOperationInProgress|\b412\b'
+        $retryable = $transientConflict -or $text -match '(?i)\b408\b|\b429\b|\b50[0-4]\b|TooManyRequests|ServiceUnavailable|InternalServerError|GatewayTimeout'
         if (-not $retryable -or $attempt -eq $MaxAttempts) {
             throw "az $($Arguments -join ' ') 失敗（exit $exitCode，第 $attempt 次）：$text"
         }

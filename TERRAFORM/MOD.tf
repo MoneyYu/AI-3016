@@ -93,6 +93,27 @@ resource "azurerm_cognitive_account" "foundry" {
   tags = local.default_tags
 }
 
+###############################################################################
+# Account child-resource serialization chain.
+#
+# Azure allows only ONE control-plane operation at a time against a given
+# Microsoft.CognitiveServices account. Every child write below is therefore
+# chained with depends_on:
+#
+#   project -> chat -> compare -> finetune_base -> rai_policy -> chat_guarded
+#           -> finetune_deployment_cleanup
+#
+# azurerm 4.81.0 already takes locks.ByID(accountId) for azurerm_cognitive_deployment
+# and azurerm_cognitive_account_rai_policy, but NOT for azurerm_cognitive_account_project.
+# That gap let Terraform race the project create against the provider's own queue and
+# Azure rejected it with 409 RequestConflict. Upstream adds the missing lock in
+# https://github.com/hashicorp/terraform-provider-azurerm/pull/33151.
+#
+# Keep this chain even after upgrading past that fix: provider mutexes are
+# process-local, so they cannot coordinate with Start-FineTune.ps1, the portal,
+# or another pipeline. The Microsoft.Authorization role assignments are a
+# different resource provider and stay parallel on purpose.
+###############################################################################
 resource "azurerm_cognitive_account_project" "project" {
   name                 = "${local.group_name_lower}-project"
   cognitive_account_id = azurerm_cognitive_account.foundry.id
@@ -147,6 +168,12 @@ resource "azurerm_cognitive_account_rai_policy" "strict" {
   cognitive_account_id = azurerm_cognitive_account.foundry.id
   base_policy_name     = "Microsoft.DefaultV2"
   mode                 = "Blocking"
+
+  # Part of the account serialization chain. Placed after the model deployments
+  # (rather than before them) because only chat_guarded consumes this policy,
+  # while terraform_data.vector_store depends on the chat deployment - keeping
+  # chat early shortens the critical path to a demo-ready environment.
+  depends_on = [azurerm_cognitive_deployment.finetune_base]
 
   # Prompt-side filters (what the user sends in).
   content_filter {
@@ -243,6 +270,8 @@ resource "azurerm_cognitive_deployment" "chat" {
     name    = local.models.chat.name
     version = local.models.chat.version
   }
+
+  depends_on = [azurerm_cognitive_account_project.project]
 }
 
 # Smaller model used for the module 2 leaderboard / side-by-side comparison.
@@ -302,7 +331,7 @@ resource "azurerm_cognitive_deployment" "chat_guarded" {
     version = local.models.chat.version
   }
 
-  depends_on = [azurerm_cognitive_deployment.finetune_base]
+  depends_on = [azurerm_cognitive_account_rai_policy.strict]
 }
 
 ###############################################################################
@@ -341,7 +370,12 @@ locals {
 # to Terraform state, and Azure refuses to delete a Foundry account while any
 # deployment remains. The destroy provisioner discovers every `.ft-` model in
 # this dedicated account, so custom Start-FineTune.ps1 suffixes cannot block
-# destroy. This dependency creates the required reverse destroy ordering.
+# destroy.
+#
+# It sits at the END of the account serialization chain so that destroy - which
+# reverses the chain - runs this cleanup FIRST, before any Terraform-managed
+# child resource of the account is deleted. Deleting a deployment while the
+# project or another deployment is being deleted returns 409/412.
 resource "terraform_data" "finetune_deployment_cleanup" {
   input = {
     resource_group = azurerm_resource_group.rg.name
@@ -349,7 +383,7 @@ resource "terraform_data" "finetune_deployment_cleanup" {
     script_path    = "${path.module}/scripts/Remove-FineTuneDeployment.ps1"
   }
 
-  depends_on = [azurerm_cognitive_account.foundry]
+  depends_on = [azurerm_cognitive_deployment.chat_guarded]
 
   provisioner "local-exec" {
     when = destroy

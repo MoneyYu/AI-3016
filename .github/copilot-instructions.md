@@ -84,8 +84,16 @@ in `README.md`.** Those belong in `docs/`.
 - Foundry pattern: `azurerm_cognitive_account` kind `AIServices` with `project_management_enabled`
   and a `custom_subdomain_name`, then `azurerm_cognitive_account_project`, then one
   `azurerm_cognitive_deployment` per model.
-- **Chain model deployments with `depends_on`** — the Cognitive Services control plane rejects
-  parallel deployment writes.
+- **Serialize every `Microsoft.CognitiveServices/accounts/*` child write with `depends_on`** —
+  Azure allows only one control-plane operation at a time per account. This covers the project,
+  the RAI policy and *all* model deployments, not just deployments. `azurerm` 4.81.0 locks
+  deployments and RAI policies by account but **not** `azurerm_cognitive_account_project`
+  (upstream fix: hashicorp/terraform-provider-azurerm#33151), so the chain must be explicit.
+  Keep it after upgrading: provider mutexes are process-local and cannot coordinate with
+  `Start-FineTune.ps1`, the portal, or another pipeline. `Microsoft.Authorization` role
+  assignments are a different resource provider and stay parallel.
+- **Put the fine-tune cleanup marker at the END of that chain** so `destroy` (which reverses it)
+  removes untracked fine-tuned deployments before any managed child resource is deleted.
 - Apply `tags = local.default_tags` to every taggable resource.
 - **Entra ID (AAD) only.** Storage `shared_access_key_enabled = false`, provider
   `storage_use_azuread = true`, Cognitive `local_auth_enabled = false` (which *requires*
