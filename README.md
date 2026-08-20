@@ -5,6 +5,11 @@ GA: G-DXYJBX6BH8
 ---
 
 # AI-3016 Reference
+
+> **AI-3016: Develop generative AI apps in Azure**
+>
+> Build generative AI applications with Microsoft Foundry: plan an AI development project, select and evaluate models, develop chat and tool-enabled apps, optimize model behavior, implement responsible AI, and build agents with Visual Studio Code.
+
 ## Course
 :::success
 Date: 20250109
@@ -16,170 +21,281 @@ Course Survey: [https://aka.ms/ai3016survey](https://aka.ms/ai3016survey)
 :::
 
 ## Course Materials
-[Course AI-3016 English version](https://aka.ms/learn/ai3016en)
-[Course AI-3016 简体中文版本](https://aka.ms/learn/ai3016cn)
-[Course AI-3016 正體中文版本](https://aka.ms/learn/ai3016tw)
+:::info
+Microsoft Learn no longer publishes a separate `/training/courses/ai-3016` landing page. The three current learning-path pages below are the official course materials. The learning path contains six modules; the seventh instructor-led lesson is a separate Microsoft Learn module listed below.
+:::
+
+[AI-3016 learning path - English](https://learn.microsoft.com/en-us/training/paths/develop-generative-ai-apps/)
+
+[AI-3016 learning path - Chinese (Simplified)](https://learn.microsoft.com/zh-cn/training/paths/develop-generative-ai-apps/)
+
+[AI-3016 learning path - Chinese (Traditional)](https://learn.microsoft.com/zh-tw/training/paths/develop-generative-ai-apps/)
+
+### Independent instructor-led lesson
+[Develop AI agents with Microsoft Foundry and Visual Studio Code](https://learn.microsoft.com/en-us/training/modules/develop-ai-agents-azure-vs-code/)
 
 ## Infos
-[LxP Portal](https://esi.microsoft.com/)
+[Enterprise Skills Initiative portal](https://esi.microsoft.com/)
 
-[ESI Support](https://aka.ms/esisupport)
+[Enterprise Skills Initiative support](https://esisupport.microsoft.com/en-US/)
 
 ## Lab
 ### Skillable lab system
-[ESI Labs](https://aka.ms/esilab)
-> Training key: 27DCB1E121A2466A
-> > Only need to redeem once
-> > Valid for 6 months
+[Enterprise Skills Initiative Labs](https://esi.learnondemand.net/User/Login?ReturnUrl=%2F)
 
-<!--
-Turtoial Video: https://media.yu.money/common/lods.html
+:::success
+Training key: 27DCB1E121A2466A
+:::
 
-### Azure (Azure Pass version)
-[Azure Pass Redeem](https://www.microsoftazurepass.com/)
-> Valid for 100 USD or 1 month
-> Only need to redeem once
-> In the lab, use `EastUS` as your region
-> > **Cloudslice version don't need to go to throught this process**
+:::info
+Redeem the training key only once.
 
-Turtoial Video: https://media.yu.money/common/azurepass.html
--->
+The redemption is valid for 6 months.
+:::
 
-### Instruction
-[AI-3016 Labs EN](https://microsoftlearning.github.io/mslearn-ai-studio/)
-[AI-3016 Labs ZH-CN](https://github.com/MicrosoftLearning/mslearn-ai-studio.zh-cn)
-[AI-3016 Lab files](https://github.com/MicrosoftLearning/mslearn-ai-studio/archive/refs/heads/main.zip)
+### Instructions - Modules 1 to 6
+[AI-3016 labs - Microsoft Foundry](https://microsoftlearning.github.io/mslearn-ai-studio/)
 
-<!--
-#### Lab Videos
-[Lab Videos for AI-3016 (Azure Pass version)](https://doc.yu.money/s/mRglULNdD)
--->
+[M01 - Prepare for an AI development project](https://microsoftlearning.github.io/mslearn-ai-studio/Instructions/Exercises/01-Explore-ai-studio.html)
 
-## Course Info
-![Course](https://mdcontent.yu.money/contents/c857bc86410dbd7196d361701.png)
+[M02 - Explore and compare models](https://microsoftlearning.github.io/mslearn-ai-studio/Instructions/Exercises/02-model-catalog-evaluation.html)
+
+[M03 - Create a generative AI chat app](https://microsoftlearning.github.io/mslearn-ai-studio/Instructions/Exercises/03-foundry-sdk.html)
+
+[M04 - Create a generative AI app that uses tools](https://microsoftlearning.github.io/mslearn-ai-studio/Instructions/Exercises/04a-use-own-data.html)
+
+[M05 - Fine-tune a language model](https://microsoftlearning.github.io/mslearn-ai-studio/Instructions/Exercises/04b-finetune-model.html)
+
+[M06 - Apply guardrails to prevent harmful output](https://microsoftlearning.github.io/mslearn-ai-studio/Instructions/Exercises/06-Explore-content-filters.html)
+
+[AI-3016 lab files (main.zip)](https://codeload.github.com/MicrosoftLearning/mslearn-ai-studio/zip/refs/heads/main)
+
+### Instructions - Module 7 (standalone lesson)
+[AI agents labs](https://microsoftlearning.github.io/mslearn-ai-agents/)
+
+[M07 - Build an agent with the Foundry portal and Visual Studio Code](https://microsoftlearning.github.io/mslearn-ai-agents/Instructions/Exercises/01-build-agent-portal-and-vscode.html)
+
+[AI agents lab files (main.zip)](https://codeload.github.com/MicrosoftLearning/mslearn-ai-agents/zip/refs/heads/main)
+
+:::warning
+The current lab repositories are English-only. The former `mslearn-ai-studio.zh-cn` repository no longer exists.
+:::
+
+:::warning
+The M05 fine-tuning lab currently asks for **Supervised** fine-tuning on `gpt-5`, while the current Microsoft Foundry fine-tuning support table lists `gpt-5` for gated **RFT** only. Check the available models and your lab subscription before starting this exercise. Your instructor will provide the current supported path if the lab UI differs.
+:::
 
 ## Links
-### Azure AI Foundry
-[What is Azure AI Foundry?](https://learn.microsoft.com/en-us/azure/ai-studio/what-is-ai-studio)
+### M01 - Plan and prepare to develop AI solutions on Azure
+[What is Microsoft Foundry?](https://learn.microsoft.com/en-us/azure/foundry/what-is-foundry)
 
-[Azure AI Foundry architecture](https://learn.microsoft.com/en-us/azure/ai-studio/concepts/architecture)
+[Microsoft Foundry architecture](https://learn.microsoft.com/en-us/azure/foundry/concepts/architecture)
 
-[What is Azure OpenAI in Azure AI Foundry portal?](https://learn.microsoft.com/en-us/azure/ai-studio/azure-openai-in-ai-studio)
+[Create a Microsoft Foundry project](https://learn.microsoft.com/en-us/azure/foundry/how-to/create-projects)
 
-[Azure AI Foundry Management center overview](https://learn.microsoft.com/en-us/azure/ai-studio/concepts/management-center)
+[What are Azure AI services?](https://learn.microsoft.com/en-us/azure/ai-services/what-are-ai-services)
 
-[Azure AI Foundry feature availability across clouds regions](https://learn.microsoft.com/en-us/azure/ai-studio/reference/region-support)
+[Microsoft Foundry Toolkit for Visual Studio Code](https://learn.microsoft.com/en-us/azure/foundry/how-to/develop/get-started-projects-vs-code)
 
-[Manage, collaborate, and organize with hubs](https://learn.microsoft.com/en-us/azure/ai-studio/concepts/ai-resources)
+[Role-based access control for Microsoft Foundry](https://learn.microsoft.com/en-us/azure/foundry/concepts/rbac-foundry)
 
-[How to create and manage an Azure AI Foundry hub](https://learn.microsoft.com/en-us/azure/ai-studio/how-to/create-azure-ai-resource?tabs=portal)
+[Responsible AI for Microsoft Foundry](https://learn.microsoft.com/en-us/azure/foundry/responsible-use-of-ai-overview)
 
-[Create a project in Azure AI Foundry portal](https://learn.microsoft.com/en-us/azure/ai-studio/how-to/create-projects?tabs=ai-studio)
+### M02 - Select, deploy, and evaluate Microsoft Foundry Models
+[Microsoft Foundry Models overview](https://learn.microsoft.com/en-us/azure/foundry/concepts/foundry-models-overview)
 
-[How to create and manage compute instances in Azure AI Foundry portal](https://learn.microsoft.com/en-us/azure/ai-studio/how-to/create-manage-compute)
+[Foundry Models sold by Azure](https://learn.microsoft.com/en-us/azure/foundry/foundry-models/concepts/models-sold-directly-by-azure)
 
-[Connections in Azure AI Foundry portal](https://learn.microsoft.com/en-us/azure/ai-studio/concepts/connections)
+[Partner and community models in Foundry Models](https://learn.microsoft.com/en-us/azure/foundry/foundry-models/concepts/models-from-partners)
 
-[How to add a new connection in Azure AI Foundry portal](https://learn.microsoft.com/en-us/azure/ai-studio/how-to/connections-add)
+[Deployment types for Foundry Models](https://learn.microsoft.com/en-us/azure/foundry/foundry-models/concepts/deployment-types)
 
-[Azure AI Foundry portal or Azure Machine Learning studio: Which experience should I choose?](https://learn.microsoft.com/en-us/ai/ai-studio-experiences-overview?context=%2Fazure%2Fai-studio%2Fcontext%2Fcontext)
+[Model benchmarks and leaderboards](https://learn.microsoft.com/en-us/azure/foundry/concepts/model-benchmarks)
 
-[Role-based access control in Azure AI Foundry portal](https://learn.microsoft.com/en-us/azure/ai-studio/concepts/rbac-ai-studio)
+[Built-in evaluators reference](https://learn.microsoft.com/en-us/azure/foundry/concepts/built-in-evaluators)
 
+[Run evaluations from the Foundry portal](https://learn.microsoft.com/en-us/azure/foundry/how-to/evaluate-generative-ai-app)
+
+[Generate a synthetic evaluation dataset](https://learn.microsoft.com/en-us/azure/foundry/observability/how-to/evaluation-dataset-synthetic)
+
+### M03 - Develop a generative AI chat app with Microsoft Foundry
+[Microsoft Foundry playgrounds](https://learn.microsoft.com/en-us/azure/foundry/concepts/concept-playgrounds)
+
+[Microsoft Foundry SDKs and endpoints](https://learn.microsoft.com/en-us/azure/foundry/how-to/develop/sdk-overview)
+
+[Endpoints for Microsoft Foundry Models](https://learn.microsoft.com/en-us/azure/foundry/foundry-models/concepts/endpoints)
+
+[Configure keyless authentication with Microsoft Entra ID](https://learn.microsoft.com/en-us/azure/foundry/foundry-models/how-to/configure-entra-id)
+
+[Use the Azure OpenAI Responses API](https://learn.microsoft.com/en-us/azure/foundry/openai/how-to/responses)
+
+[Work with chat completion models](https://learn.microsoft.com/en-us/azure/foundry/openai/how-to/chatgpt)
+
+### M04 - Develop generative AI apps that use tools
+[Code Interpreter tool for Microsoft Foundry agents](https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/tools/code-interpreter)
+
+[Web search tool](https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/tools/web-search)
+
+[File search tool for agents](https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/tools/file-search)
+
+[Use function calling with Microsoft Foundry agents](https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/tools/function-calling)
+
+### M05 - Optimize generative AI model performance with Microsoft Foundry
+[Prompt engineering techniques](https://learn.microsoft.com/en-us/azure/foundry/openai/concepts/prompt-engineering)
+
+[System message design for Azure OpenAI](https://learn.microsoft.com/en-us/azure/foundry/openai/concepts/advanced-prompt-engineering)
+
+[Safety system messages](https://learn.microsoft.com/en-us/azure/foundry/openai/concepts/system-message)
+
+[Retrieval augmented generation and indexes](https://learn.microsoft.com/en-us/azure/foundry/concepts/retrieval-augmented-generation)
+
+[Customize a model with fine-tuning](https://learn.microsoft.com/en-us/azure/foundry/openai/how-to/fine-tuning)
+
+[Microsoft Foundry fine-tuning considerations](https://learn.microsoft.com/en-us/azure/foundry/openai/concepts/fine-tuning-considerations)
+
+### M06 - Implement a responsible generative AI solution in Microsoft Foundry
+[Guardrails and controls overview](https://learn.microsoft.com/en-us/azure/foundry/guardrails/guardrails-overview)
+
+[Intervention points](https://learn.microsoft.com/en-us/azure/foundry/guardrails/intervention-points)
+
+[Default guardrail policies for Azure OpenAI](https://learn.microsoft.com/en-us/azure/foundry/openai/concepts/default-safety-policies)
+
+[Prompt Shields in Microsoft Foundry](https://learn.microsoft.com/en-us/azure/foundry/openai/concepts/content-filter-prompt-shields)
+
+[Groundedness detection filter](https://learn.microsoft.com/en-us/azure/foundry/openai/concepts/content-filter-groundedness)
+
+[Protected material detection filter](https://learn.microsoft.com/en-us/azure/foundry/openai/concepts/content-filter-protected-material)
+
+[Personally identifiable information filter](https://learn.microsoft.com/en-us/azure/foundry/openai/concepts/content-filter-personal-information)
+
+### M07 - Develop AI agents with Microsoft Foundry and Visual Studio Code
+[Microsoft Foundry Agent Service overview](https://learn.microsoft.com/en-us/azure/foundry/agents/overview)
+
+[Agent development lifecycle](https://learn.microsoft.com/en-us/azure/foundry/agents/concepts/development-lifecycle)
+
+[Set up standard agent resources](https://learn.microsoft.com/en-us/azure/foundry/agents/concepts/standard-agent-setup)
+
+[Types of tools in Foundry Agent Service](https://learn.microsoft.com/en-us/azure/foundry/agents/concepts/tool-catalog)
+
+[Create hosted agent workflows in Visual Studio Code](https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/vs-code-agents-workflow-pro-code)
+
+[Quickstart: Build agents using the Responses API](https://learn.microsoft.com/en-us/azure/foundry/agents/quickstarts/responses-api)
+
+[Use your own resources in Foundry Agent Service](https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/use-your-own-resources)
+
+[Agent Service limits, quotas, and regions](https://learn.microsoft.com/en-us/azure/foundry/agents/concepts/limits-quotas-regions)
+
+## Videos
+### M01 - Plan and prepare to develop AI solutions on Azure
+| No. | Name | Link |
+| --- | --- | --- |
+| 1 | Introduction to Azure AI Studio AI-3016 *(legacy terminology; concepts retained)* | [YouTube](https://youtu.be/boEuyJGEHDo) |
+| 2 | Microsoft Foundry: The AI app and agent factory | [YouTube](https://youtu.be/ooZ3xXEdOKI) |
+
+### M02 - Select, deploy, and evaluate Microsoft Foundry Models
+| No. | Name | Link |
+| --- | --- | --- |
+| 1 | Explore, deploy, and chat with language models AI-3016 *(legacy terminology; concepts retained)* | [YouTube](https://youtu.be/fEpm0FDBu-0) |
+| 2 | Discover 11,000+ AI models with Microsoft Foundry | [YouTube](https://youtu.be/B0rj4K6i55c) |
+
+### M05 - Optimize generative AI model performance with Microsoft Foundry
+| No. | Name | Link |
+| --- | --- | --- |
+| 1 | Compare model optimization strategies AI-3016 *(legacy terminology; concepts retained)* | [YouTube](https://youtu.be/SkGItraTlHc) |
+
+### M07 - Develop AI agents with Microsoft Foundry and Visual Studio Code
+| No. | Name | Link |
+| --- | --- | --- |
+| 1 | Foundry Agent Service: Build, Host, and Scale Intelligent Agent Systems at Scale | [YouTube](https://youtu.be/f14urPQyYsk) |
+
+## Mind Map
+```markmap
+# AI-3016: Develop generative AI apps in Azure
+
+## M01 - Plan and prepare to develop AI solutions on Azure
+### Microsoft Foundry mental model
+- [Resources and projects](https://learn.microsoft.com/en-us/azure/foundry/how-to/create-projects): resources provide services; projects isolate app and agent development work
+- Inside a project: **Models**, **Agents**, **Tools**, and **Knowledge**
+- [Foundry Tools](https://learn.microsoft.com/en-us/azure/ai-services/what-are-ai-services): prebuilt AI capabilities instead of rebuilding common tasks
+### Development foundation
+- VS Code + Foundry Toolkit + SDKs + source control
+- [RBAC](https://learn.microsoft.com/en-us/azure/foundry/concepts/rbac-foundry) and Microsoft Entra ID secure the team workflow
 ### Responsible AI
-[Microsoft Responsible AI Standard](https://aka.ms/RAI)
+- Fairness; Reliability & Safety; Privacy & Security
+- Inclusiveness; Transparency; Accountability
 
-[Responsible AI for Azure AI Foundry](https://learn.microsoft.com/en-us/azure/ai-studio/responsible-use-of-ai-overview)
+## M02 - Select, deploy, and evaluate Microsoft Foundry Models
+### Select a baseline
+- [Model catalog](https://learn.microsoft.com/en-us/azure/foundry/foundry-models/concepts/models-sold-directly-by-azure): Azure-sold **vs** partner and community models
+- Compare capability, provider, task, cost, and fine-tuning support
+### Deploy for the workload
+- [Global Standard](https://learn.microsoft.com/en-us/azure/foundry/foundry-models/concepts/deployment-types): general workloads and broadest quota
+- Provisioned for predictable throughput; Batch for large asynchronous work
+- Data Zone / Standard when data-residency constraints drive the choice
+### Evaluate evidence, not impressions
+- Benchmarks: quality, safety, throughput, and cost
+- Playground comparison **vs** automated evaluation with representative and edge prompts
 
-[Content Safety in Azure AI Foundry portal](https://learn.microsoft.com/en-us/azure/ai-studio/ai-services/content-safety-overview)
+## M03 - Develop a generative AI chat app with Microsoft Foundry
+### Prototype in the playground
+- Test prompts, temperature, max tokens, and system messages before coding
+- Choose code samples by endpoint, API, language, and SDK
+### Choose endpoint and SDK
+- Foundry project endpoint + Foundry SDK: project-native capabilities
+- Azure OpenAI endpoint + OpenAI SDK: broader OpenAI API surface
+- [Entra ID authentication](https://learn.microsoft.com/en-us/azure/foundry/foundry-models/how-to/configure-entra-id) is the keyless default
+### Chat Completions vs Responses API
+- Chat Completions: client retains the complete `messages` array
+- [Responses API](https://learn.microsoft.com/en-us/azure/foundry/openai/how-to/responses): server state + `previous_response_id` + `response.output_text`
+- Prefer Responses API for new apps unless custom memory handling is required
 
-[Use Content Safety in Azure AI Foundry portal](https://learn.microsoft.com/en-us/azure/ai-studio/ai-services/how-to/content-safety)
+## M04 - Develop generative AI apps that use tools
+### Extend what a model can do
+- `code_interpreter`: run Python in an isolated sandbox
+- `web_search`: retrieve current public information
+- `file_search`: ground answers in uploaded, indexed files
+### Build grounded answers
+- Vector store → upload / chunk / embed files → retrieve relevant passages
+- Include file-search results to make citations traceable
+### Orchestrate custom actions
+- [Function calling](https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/tools/function-calling): model requests a call, **your app executes it**, then sends `function_call_output`
 
-- [Content filtering in Azure AI Foundry portal](https://learn.microsoft.com/en-us/azure/ai-studio/concepts/content-filtering)
-- [Use blocklists in Azure AI Foundry portal](https://learn.microsoft.com/en-us/azure/ai-studio/how-to/use-blocklists)
+## M05 - Optimize generative AI model performance with Microsoft Foundry
+### Diagnose the goal
+- Context problem (**what** the model needs to know) → RAG
+- Behavior problem (**how** the model should act) → prompt engineering or fine-tuning
+### Prompt engineering first
+- System message = role + boundaries + output expectations
+- Format template, structured reasoning, and few-shot patterns
+### Ground or tune
+- RAG = retrieve relevant data → augment prompt → generate grounded response
+- Fine-tuning = example prompts and responses for consistent tone, style, and format
+- Prompt engineering → RAG → fine-tuning: increase cost and operational complexity
 
-[Responsible use of AI with Azure AI services](https://learn.microsoft.com/en-us/azure/ai-services/responsible-use-of-ai-overview?context=%2Fazure%2Fai-studio%2Fcontext%2Fcontext)
+## M06 - Implement a responsible generative AI solution in Microsoft Foundry
+### Responsible AI lifecycle
+- **Map** relevant harms → **Measure** outputs → **Mitigate** at multiple layers → **Manage** in operations
+- Use an AI Impact Assessment to record intended use, risks, and mitigations
+### Layered guardrails
+- Model; safety system; system message / grounding; user experience
+- Violence, hate, sexual content, self-harm, PII, protected material, and groundedness
+### Defend agentic applications
+- [Prompt Shields](https://learn.microsoft.com/en-us/azure/foundry/openai/concepts/content-filter-prompt-shields): direct jailbreak and indirect prompt attacks
+- Phased delivery gathers feedback before broad release
 
-### Model Deployment
-[Model catalog and collections in Azure AI Foundry portal](https://learn.microsoft.com/en-us/azure/ai-studio/how-to/model-catalog-overview)
+## M07 - Develop AI agents with Microsoft Foundry and Visual Studio Code
+### Agent building blocks
+- Agent = model + instructions + tools + knowledge
+- Tools: retrieval, actions, file search, code interpreter, and custom functions
+### Development lifecycle
+- Connect project → create agent → configure instructions → add tools → test → iterate → deploy → integrate
+- Required: Foundry project + model deployment; optional: Search, Storage, Key Vault, Functions
+### Portal and VS Code
+- Portal: visual exploration, prototyping, and collaboration
+- VS Code: code-first development, Git version control, and production workflow
+- [Agent Service](https://learn.microsoft.com/en-us/azure/foundry/agents/overview) handles tool calling, state management, and infrastructure
+```
 
-[Data, privacy, and security for use of models through the model catalog in Azure AI Foundry portal](https://learn.microsoft.com/en-us/azure/ai-studio/how-to/concept-data-privacy)
-
-[Model deprecation and retirement in Azure AI model catalog](https://learn.microsoft.com/en-us/azure/ai-studio/concepts/model-lifecycle-retirement)
-
-### Benchmark
-[Model benchmarks in Azure AI Foundry portal](https://learn.microsoft.com/en-us/azure/ai-studio/concepts/model-benchmarks)
-
-[How to benchmark models in Azure AI Foundry portal](https://learn.microsoft.com/en-us/azure/ai-studio/how-to/benchmark-model-in-catalog)
-
-### Deployment
-[Overview: Deploy AI models in Azure AI Foundry portal](https://learn.microsoft.com/en-us/azure/ai-studio/concepts/deployments-overview)
-
-[What is Azure AI model inference service?](https://learn.microsoft.com/en-us/azure/ai-studio/ai-services/model-inference)
-
-[Deploy models as serverless APIs](https://learn.microsoft.com/en-us/azure/ai-studio/how-to/deploy-models-serverless?tabs=azure-ai-studio)
-
-[How to deploy and inference a managed compute deployment with code](https://learn.microsoft.com/en-us/azure/ai-studio/how-to/deploy-models-managed)
-
-[Quickstart: Use the chat playground in Azure AI Foundry portal](https://learn.microsoft.com/en-us/azure/ai-studio/quickstarts/get-started-playground)
-
-### Prompt Enginnering
-[Introduction to prompt engineering](https://learn.microsoft.com/en-us/azure/ai-services/openai/concepts/prompt-engineering)
-
-[Prompt engineering techniques](https://learn.microsoft.com/en-us/azure/ai-services/openai/concepts/advanced-prompt-engineering?pivots=programming-language-chat-completions)
-
-[Introduction to prompt engineering with GPT-4 Turbo with Vision](https://learn.microsoft.com/en-us/azure/ai-services/openai/concepts/gpt-4-v-prompt-engineering)
-
-[System message framework and template recommendations for Large Language Models (LLMs)](https://learn.microsoft.com/en-us/azure/ai-services/openai/concepts/system-message)
-
-### Prompt Flow
-[Prompt flow in Azure AI Foundry portal](https://learn.microsoft.com/en-us/azure/ai-studio/how-to/prompt-flow)
-
-[Develop a prompt flow](https://learn.microsoft.com/en-us/azure/ai-studio/how-to/flow-develop)
-
-### RAG
-[Retrieval augmented generation and indexes](https://learn.microsoft.com/en-us/azure/ai-studio/concepts/retrieval-augmented-generation)
-
-[How to add and manage data in your Azure AI Foundry project](https://learn.microsoft.com/en-us/azure/ai-studio/how-to/data-add)
-
-[How to build and consume vector indexes in Azure AI Foundry portal](https://learn.microsoft.com/en-us/azure/ai-studio/how-to/index-add)
-
-### Fine-Tune
-[Fine-tune models with Azure AI Foundry](https://learn.microsoft.com/en-us/azure/ai-studio/concepts/fine-tuning-overview)
-
-[Fine-tune models using managed compute](https://learn.microsoft.com/en-us/azure/ai-studio/how-to/fine-tune-managed-compute)
-
-[Customize a model with fine-tuning (Azure OpenAI models)](https://learn.microsoft.com/en-us/azure/ai-services/openai/how-to/fine-tuning?context=%2Fazure%2Fai-studio%2Fcontext%2Fcontext&tabs=azure-openai%2Cturbo%2Cpython-new&pivots=programming-language-studio)
-
-### Evaluation
-[Evaluation of generative AI applications](https://learn.microsoft.com/en-us/azure/ai-studio/concepts/evaluation-approach-gen-ai)
-
-[Evaluation and monitoring metrics for generative AI](https://learn.microsoft.com/en-us/azure/ai-studio/concepts/evaluation-metrics-built-in?tabs=warning)
-
-[Manually evaluate prompts in Azure AI Foundry portal playground](https://learn.microsoft.com/en-us/azure/ai-studio/how-to/evaluate-prompts-playground)
-
-[Generate synthetic and simulated data for evaluation](https://learn.microsoft.com/en-us/azure/ai-studio/how-to/develop/simulator-interaction-data)
-
-[How to evaluate generative AI models and applications with Azure AI Foundry](https://learn.microsoft.com/en-us/azure/ai-studio/how-to/evaluate-generative-ai-app)
-
-[How to view evaluation results in Azure AI Foundry portal](https://learn.microsoft.com/en-us/azure/ai-studio/how-to/evaluate-results)
-
-[Develop an evaluation flow in Azure AI Foundry portal](https://learn.microsoft.com/en-us/azure/ai-studio/how-to/flow-develop-evaluation)
-
-<!--
-## Whiteboard
-### Whiteboard
-
-
-### OneNotes
--->
-
-<!--
-## Else
-[Azure for GCP Professionals](https://docs.microsoft.com/en-us/azure/architecture/gcp-professional/)
-
-[Azure for AWS Professionals](https://docs.microsoft.com/en-us/azure/architecture/aws-professional/)
--->
 ## Contact
 - Money Yu
     - Mail: [Money.Yu@microsoft.com](mailto:Money.Yu@microsoft.com)
